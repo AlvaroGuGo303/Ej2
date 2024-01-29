@@ -1,6 +1,6 @@
 package com.example.vincle_ej2.controllers;
 
-import com.example.vincle_ej2.dto.ItemDTO;
+import com.example.vincle_ej2.body.ItemBody;
 import com.example.vincle_ej2.enums.EnumTiposItem;
 import com.example.vincle_ej2.repository.SqlItemRepositoryImp;
 import com.example.vincle_ej2.valueObject.ResponseDTO;
@@ -111,10 +111,10 @@ public class ItemController implements ItemControllerPort{
 
     @Override
     @PutMapping("/update")
-    public ResponseDTO<Object> updateItem (@RequestBody ItemDTO itemDTO){
+    public ResponseDTO<Object> updateItem (@RequestBody ItemBody itemBody){
         ResponseDTO<Object> responseDTO = new ResponseDTO<>();
         try {
-            Object obj = this.sqlItemRepositoryImp.updateItem(itemDTO);
+            Object obj = this.sqlItemRepositoryImp.updateItem(itemBody);
             if(obj != null){
                 responseDTO.setData(obj);
             }else{
@@ -128,10 +128,10 @@ public class ItemController implements ItemControllerPort{
 
     @Override
     @DeleteMapping("/delete/{itemId}")
-    public ResponseDTO<Object> deleteItemById (@PathVariable("itemId") Integer itemId){
+    public ResponseDTO<Object> deleteItemById (@PathVariable("itemId") Integer itemId,@RequestBody String nameClient){
         ResponseDTO<Object> responseDTO = new ResponseDTO<>();
         try {
-            Object obj = this.sqlItemRepositoryImp.deleteItemById(itemId);
+            Object obj = this.sqlItemRepositoryImp.deleteItemById(itemId,nameClient);
             if(obj != null){
                 responseDTO.setData(obj);
             }else{

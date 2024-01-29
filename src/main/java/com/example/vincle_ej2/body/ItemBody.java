@@ -1,4 +1,4 @@
-package com.example.vincle_ej2.dto;
+package com.example.vincle_ej2.body;
 
 import com.example.vincle_ej2.enums.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDTO {
+public class ItemBody {
 
     protected Integer id;
     protected String nameClient;

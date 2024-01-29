@@ -1,9 +1,8 @@
 package com.example.vincle_ej2.repository;
 
-import com.example.vincle_ej2.dto.ItemDTO;
+import com.example.vincle_ej2.body.ItemBody;
 import com.example.vincle_ej2.entity.*;
 import com.example.vincle_ej2.enums.*;
-import com.example.vincle_ej2.mapper.ItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,41 +107,28 @@ public class SqlItemRepositoryImp {
         return this.sqlItemRepository.findAll();
     }
 
-    public ItemEntity updateItem(ItemDTO itemDTO) {
-        ItemEntity itemEntity = ItemMapper.getInstance().EntityToDto(itemDTO);
-        itemEntity.setEnumEstado(EnumEstado.ESTADO_WAITING);
-
-        /*
-         *Esto debería funcionar, pero da error en el ID.
-         */
-        //return this.sqlItemRepository.save(Objects.requireNonNull(itemEntity));
-
-        /*
-         * Haciéndolo manualmente, en caso de dejar de que no se quiera modificar un campo, se debería dejar vacío y actualizar lo necesario
-         * Se necesita que el nombre de la variable sea exactamente igual al que está esperando, por eso creamos una variable y no pasamos el campo directamente
-        */
-        Integer id = itemEntity.getId();
-        String timestamp = itemEntity.getTimestamp();
-        String nameClient = itemEntity.getNameClient();
-        EnumTiposItem enumTipoItem = itemEntity.getEnumTipoItem();
-        EnumEstado enumEstado = itemEntity.getEnumEstado();
-        EnumCapacidad enumCapacidad = itemEntity.getEnumCapacidad();
-        EnumEnvase enumEnvase = itemEntity.getEnumEnvase();
-        EnumNevera enumNevera = itemEntity.getEnumNevera();
-        Integer resuInteger = this.sqlItemRepository.updateFullItemParams(
-                id,timestamp, nameClient,
-                enumTipoItem,enumEstado,enumCapacidad,enumEnvase,enumNevera);
-        // If okk -> integer = num rows affected. 0 if no changes. -1 if error.
-        if(resuInteger != -1){
-            return itemEntity;
+    public ItemEntity updateItem(ItemBody itemBody) {
+        ItemEntity itemEntity = this.getItemById(itemBody.getId());
+        // ¿Hay que verificar si está borrado?
+        // ¿Se puede hacer el update de uno ya borrado? En teoría no, ¿o si? ¿Quién lo hace?
+        if( itemEntity == null){  // || itemEntity.getEnumEstado()==EnumEstado.ESTADO_DELETED){
+            return null;
         }
-        return null;
+        itemEntity.setNameClient(itemBody.getNameClient());
+        itemEntity.setEnumTipoItem(itemBody.getEnumTipoItem());
+        itemEntity.setEnumEstado(EnumEstado.ESTADO_WAITING);
+        itemEntity.setEnumCapacidad(itemBody.getEnumCapacidad());
+        itemEntity.setEnumEnvase(itemBody.getEnumEnvase());
+        itemEntity.setEnumNevera(itemBody.getEnumNevera());
+
+        return this.sqlItemRepository.save(Objects.requireNonNull(itemEntity));
     }
 
-    public ItemEntity deleteItemById(Integer itemId) {
+    public ItemEntity deleteItemById(Integer itemId, String nameClient) {
         ItemEntity itemEntity = this.getItemById(itemId);
-        if( itemEntity != null){
+        if( itemEntity != null  && itemEntity.getEnumEstado()!=EnumEstado.ESTADO_DELETED){
             itemEntity.setEnumEstado(EnumEstado.ESTADO_DELETED);
+            itemEntity.setNameClient(nameClient);
             this.sqlItemRepository.save(Objects.requireNonNull(itemEntity));
             return itemEntity;
         }

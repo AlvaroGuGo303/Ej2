@@ -1,6 +1,6 @@
 package com.example.vincle_ej2.controllers;
 
-import com.example.vincle_ej2.dto.ItemDTO;
+import com.example.vincle_ej2.body.ItemBody;
 import com.example.vincle_ej2.valueObject.ResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +28,8 @@ public interface ItemControllerPort {
     ResponseDTO<Object> getAllItems ();
 
     @PutMapping("/update")
-    ResponseDTO<Object> updateItem (@RequestBody ItemDTO itemDTO);
+    ResponseDTO<Object> updateItem (@RequestBody ItemBody itemBody);
 
     @DeleteMapping("/delete/{itemId}")
-    ResponseDTO<Object> deleteItemById (@PathVariable("itemId") Integer itemId);
+    ResponseDTO<Object> deleteItemById (@PathVariable("itemId") Integer itemId, @RequestBody String nameClient);
 }
